@@ -265,7 +265,7 @@ var Game = {
             </div>
           </div>\n`;
           var validationFunc=function(input){
-            return +input&&+input>0&&+input<6;
+            return input==""||(+input&&+input>0&&+input<6);
           }
           Game.waitForInput([13/*enter*/,32/*space*/],validationFunc,function(choice){
             document.getElementById("game").innerHTML=
@@ -287,10 +287,10 @@ var Game = {
             var validationFunc=null;
             if(choice == 1){
               mattAdvice=
-                `There are 2 oxen in a yoke; I recommend at least 3 yoke. I charge $40 a yoke.<br>\n
+                `There are 2 oxen in a yoke. I recommend at least 3 yoke, but you need as least one yoke. I charge $40 a yoke.<br>\n
                 How many yoke do you want? `;
               validationFunc=function(input){
-                return input.length<2&&Number.isInteger(+input)&&input<=10;
+                return Number.isInteger(+input)&&input<=10&&input>=1;
               }
               mattFunc=function(input){
                 //add yokes to bill
@@ -332,21 +332,21 @@ var Game = {
               }
             }
             else if(choice == 5){
-              mattAdvice="How many wagon wheels?"
+              mattAdvice="You can carry 3 wagon wheels.<br>\nHow many wagon wheels?"
               validationFunc=function(input){
-                return input.length<2&&Number.isInteger(+input);
+                return input.length<2&&Number.isInteger(+input)&&input<=3;
               }
               mattFunc=function(input){
                 //add wagon wheels to bill
                 thestore.adjust_bill("wheels", input);
 
-                mattAdvice="How many wagon axles?";
+                mattAdvice="You can carry 3 wagon axles.<br>\nHow many wagon axles?";
                 document.getElementById("matt_advice").innerHTML=mattAdvice + '<span id="input"></span>';
                 Game.waitForInput(null,validationFunc,function(input){
                   //add wagon axles to bill
                   thestore.adjust_bill("axles", input);
 
-                  mattAdvice="How many wagon tongues?";
+                  mattAdvice="You can carry three wagon tongues.<br>\nHow many wagon tongues?";
                   document.getElementById("matt_advice").innerHTML=mattAdvice + '<span id="input"></span>';
                   Game.waitForInput(null,validationFunc,function(input){
                     //add wagon tongues to bill
@@ -424,7 +424,7 @@ var Game = {
         input=input.slice(0,-1);
         element.innerHTML=input + "_";
       }
-      else if((x == 13||enterKeys.includes(x)) && validationFunc(input) )//enter key pressed
+      else if((x == 13||enterKeys.includes(x)) && validationFunc(input) )//enter key pressed and input valid
       {
         document.onkeydown=null;
         document.onkeypress=null;
