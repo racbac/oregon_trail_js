@@ -358,6 +358,13 @@ var Game = {
               }
             }
             else{
+              Game.gameCaravan.purchase("oxen", thestore.oxen.price, thestore.oxen.amt);
+              Game.gameCaravan.purchase("axles", thestore.axles.price, thestore.axles.amt);
+              Game.gameCaravan.purchase("clothing", thestore.clothing.price, thestore.clothing.amt);
+              Game.gameCaravan.purchase("wheels", thestore.wheels.price, thestore.wheels.amt);
+              Game.gameCaravan.purchase("tongues", thestore.tongues.price, thestore.tongues.amt);
+              Game.gameCaravan.purchase("food", thestore.food.price, thestore.food.amt);
+              Game.gameCaravan.purchase("bait", thestore.bait.price, thestore.bait.amt);
               Game.scenes.Journey();
               return;
             }
