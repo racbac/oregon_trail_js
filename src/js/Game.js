@@ -6,7 +6,7 @@ var Game = {
       document.getElementById("game").innerHTML=
         '<div class=\"centered_content\">'+
           '<h1>The Oregon Trail</h1>'+
-          '<div>'+
+          '<div class="white_black">'+
           '<p>You may:</p>'+
           '<ol>'+
             '<li>Travel the trail</li>'+
@@ -41,7 +41,7 @@ var Game = {
     },
     chooseOccupation: function(){
       document.getElementById("game").innerHTML =
-        `<div id="choose_occupation">
+        `<div id="choose_occupation" class="white_black">
           <p>Many kinds of people made the trip to Oregon.</p>
           <p>You may:</p>
           <ol>
@@ -73,7 +73,7 @@ var Game = {
         }
         else if(choice == 4){
           document.getElementById("game").innerHTML =
-            `<div id="choose_occupation" class=\"centered_content\">
+            `<div id="choose_occupation" class=\"centered_content white_black\">
               <p>Traveling to Oregon isn't easy! But if you're a banker, you'll have more money for supplies and services than a carpenter or a farmer.</p>\n
               <p>However, the harder you have to try, the more points you deserve! Therefore, the farmer earns the greatest number of points and the banker earns the least</p>\n
               <p class="prompt">Press ENTER to continue</p>\n
@@ -91,7 +91,7 @@ var Game = {
     enterNames: function(){
 
       document.getElementById("game").innerHTML =
-        `<div id="enterNames">
+        `<div id="enterNames" class="white_black">
           <p>
             What is the first name of the wagon leader?
             <span id="input"></span>
@@ -105,7 +105,7 @@ var Game = {
         Game.gameCaravan.addPerson(leader);
         
         document.getElementById("enterNames").innerHTML =
-          ` <div>\n
+          ` <div class="white_black">\n
               <p>What are the first names of the four other members in your party?</p>\n
               <ol>\n`
                 +'<li>'+leadername+'</li>\n'+
@@ -148,7 +148,7 @@ var Game = {
     },
     chooseDepartureMonth:function(){
       document.getElementById("game").innerHTML =
-      `<div id="chooseMonth"><div>
+      `<div id="chooseMonth" class="white_black"><div>
         <p>It is 1848. Your jumping off place for Oregon is Independence, Missouri. You must decide which month to leave Independence.</p>
         <ol>
           <li>March</li>
@@ -198,16 +198,16 @@ var Game = {
       });
     },
     adviceDepartureMonth:function(){
-      document.getElementById("game").innerHTML ="<div>\n<p>You attend a public meeting held for \"folks with the California - Oregon fever.\" You're told:<br><br>\nIf you leave too early, there won't be any grass for your oxen to eat. If you leave too late, you may not get to Oregon before winter comes. If you leave at just the right time, there will be green grass and the weather will still be cool.</p>\n<p class=\"prompt\">Press ENTER to continue</p>\n</div>\n";
+      document.getElementById("game").innerHTML ="<div class='white_black'>\n<p>You attend a public meeting held for \"folks with the California - Oregon fever.\" You're told:<br><br>\nIf you leave too early, there won't be any grass for your oxen to eat. If you leave too late, you may not get to Oregon before winter comes. If you leave at just the right time, there will be green grass and the weather will still be cool.</p>\n<p class=\"prompt\">Press ENTER to continue</p>\n</div>\n";
       Game.waitForInput(null,null,Game.scenes.chooseDepartureMonth);
     },
     MattStore:function(){
-      document.getElementById("game").innerHTML ="<div>\n<p>Before leaving Independence you should buy equipment and supplies. You have $" + Game.gameCaravan.occupation.cash + " in cash, but you don't have to spend it all now.</p>\n<p class=\"prompt\">Press ENTER to continue</p>\n</div>\n";
+      document.getElementById("game").innerHTML ="<div class='white_black'>\n<p>Before leaving Independence you should buy equipment and supplies. You have $" + Game.gameCaravan.occupation.cash + " in cash, but you don't have to spend it all now.</p>\n<p class=\"prompt\">Press ENTER to continue</p>\n</div>\n";
       Game.waitForInput(null,null,function(){
         document.getElementById("game").innerHTML =
           `<div id="matt_intro">\n
             <div id="matt_img"></div>\n
-              <div>\n
+              <div class="white_black">\n
                 <p>Hello, I'm Mal. So you're going to Oregon! I can fix you up with what you need:</p>\n
                 <ul>\n<li>a team of oxen to pull your wagon</li>\n
                   <li>clothing for both summer and winter</li>\n
@@ -218,30 +218,11 @@ var Game = {
               </div>
             <p class=\"prompt\">Press ENTER to continue</p>\n
           </div>\n`;
-        
-        /* var price={
-          oxen:40/2, //yoke = 2oxen
-          food:0.2,
-          clothing:10,
-          baits:2/20, //box = 20 baits
-          wheels:10,
-          axles:10,
-          tongues:10
-        };
-        var cart={
-          oxen:0,
-          food:0,
-          clothing:0,
-          baits:0,
-          wheels:0,
-          axles:0,
-          tongues:0
-        }; */
         thestore = new Store(20, 10, 2, 10, 10, 10, 0.2);
         var storeFront = function(){
           
           document.getElementById("game").innerHTML =
-          `<div id="mattstore">\n
+          `<div id="mattstore" class="white_black">\n
               <div>
                 <p>Mal's General Store<br>\n
                 Independence, Missouri<br>\n` +
@@ -269,7 +250,7 @@ var Game = {
           }
           Game.waitForInput([13/*enter*/,32/*space*/],validationFunc,function(choice){
             document.getElementById("game").innerHTML=
-            `<div id="mattstore">
+            `<div id="mattstore" class="white_black">
               <p>
                 Matt's General Store<br>
                 Independence, Missouri<br>
@@ -381,17 +362,20 @@ var Game = {
     },
     Journey:function(){
       document.getElementById("game").innerHTML =
-        `<div id="journey">
-          <div>animation goes here</div>
-          <p>press ENTER to size up the situation</p>
-          <ul>
-            <li>Date:</li>
-            <li>Weather:</li>
-            <li>Health:</li>
-            <li>Food:</li>
-            <li>Next Landmark:</li>
-            <li>Miles Traveled:</li>
-          </ul>
+        `<div id="journey" class="centered_content white_black">
+          <div id="animation"></div>
+          <div id="ground"></div>
+          <div id="status">
+            <p>press ENTER to size up the situation</p>
+            <ul>
+              <li>Date:</li>
+              <li>Weather:</li>
+              <li>Health:</li>
+              <li>Food:</li>
+              <li>Next Landmark:</li>
+              <li>Miles Traveled:</li>
+            </ul>
+          </div>
         </div>`;
     },
     Fishing: function(){
