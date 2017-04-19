@@ -356,12 +356,9 @@ var Game = {
         Game.waitForInput(null,null,storeFront);
       });
     },
-  
-    BuySupply:function(){
-
-    },
     Journey:function(){
       document.getElementById("game").innerHTML =
+
         `<div id="journey" class="centered_content white_black">
           <div id="animation"></div>
           <div id="ground"></div>
@@ -377,6 +374,62 @@ var Game = {
             </ul>
           </div>
         </div>`;
+        document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
+        document.getElementById("weather").innerHTML="weather";
+        document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
+        document.getElementById("food").innerHTML=Game.gameCaravan.food;
+        document.getElementById("next_landmark").innerHTML='000';
+        document.getElementById("miles").innerHTML=Game.miles;
+        var timeOfDay=0;
+        var HoursPerDay=8;
+        var MPH=3;
+        var travelFunc=function(){//called once per game Hour
+          timeOfDay++;
+
+          if(timeOfDay==24){//once a day
+
+            Game.date.setDate(Game.date.getDate()+1);
+            timeOfDay=0;
+            /*generate the conditions for the day*/
+            var weather="warm";
+            var event=null;//randomEvent();
+            /*update food and health*/
+
+
+            /*update html for event*/
+            document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
+            document.getElementById("weather").innerHTML=weather;
+            document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
+            document.getElementById("food").innerHTML=Game.gameCaravan.food;
+            document.getElementById("next_landmark").innerHTML='000';
+
+            if(event){
+              clearInterval(travelLoop);
+              waitForInput(null,null,game.scenes.EnterMenu);
+              return;
+            }
+          }
+          if(timeOfDay==5){//start traveling at 5am
+            /*set oxen animation to running and the background to scroll*/
+            document.getElementById("animation").innerHTML="<p>animation started</p>";
+          }
+          else if(timeOfDay== 5+HoursPerDay){
+            Game.miles+=MPH*HoursPerDay;
+            document.getElementById("miles").innerHTML=Game.miles;
+            /*set oxen animation to stopped and the background to stopped*/
+            document.getElementById("animation").innerHTML="<p>animation stopped</p>";
+          }
+
+        }
+        var travelLoop=setInterval(travelFunc,3000/24); /*call travelFunc once per game hour, 3 game day per second*/
+        Game.waitForInput(null,null,function(){
+          clearInterval(travelLoop);
+          Game.scenes.EnterMenu();
+        });
+    },
+    EnterMenu: function(){
+      document.getElementById("game").innerHTML="<p>menu will added here later. Enter to contunue.</p>";
+      Game.waitForInput(null,null,Game.scenes.Journey);
     },
     Fishing: function(){
 
@@ -413,7 +466,7 @@ var Game = {
       if(x==8)//backspace pressed
       {
         input=input.slice(0,-1);
-        element.innerHTML=input + "_";
+        element.innerHTML=input;
       }
       else if((x == 13||enterKeys.includes(x)) && validationFunc(input) )//enter key pressed and input valid
       {
@@ -421,8 +474,23 @@ var Game = {
         document.onkeypress=null;
         element.innerHTML = element.innerHTML.substring(0, element.innerHTML.length - 1);
         callback(input);
+      }else if(x==8)//backspace pressed
+      {
+        input=input.slice(0,-1);
+        element.innerHTML=input+"_";
+
       }
     };
+  },
+  fishingGame:function(){
+    var fish=["sturgeon","salmon","steelhead","trout","catfish","bass","sunfish","barracuda","flounder"];
+    var weights=[50,10,27,27,40,12,1,20,26];
+    var chanceToCatch=Math.floor((Math.random()*10)+1);
+    var fishNum=Math.floor((Math.random()*9));
+    if (chanceToCatch>5){
+      document.getElementById("game").innerHTML="You got a"+fish[fishNum];
+      Caravan.food+=weights[fishNum];
+    }
   }
 };
 
