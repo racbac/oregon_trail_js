@@ -365,14 +365,13 @@ var Game = {
           <div id="status">
             <p>press ENTER to size up the situation</p>
             <ul>
-              <li>Date:</li>
-              <li>Weather:</li>
-              <li>Health:</li>
-              <li>Food:</li>
-              <li>Next Landmark:</li>
-              <li>Miles Traveled:</li>
-            </ul>
-          </div>
+            <li>Date: <span id="date"></span></li>
+            <li>Weather: <span id="weather"></span></li>
+            <li>Health: <span id="health"></span></li>
+            <li>Food: <span id="food"></span></li>
+            <li>Next Landmark: <span id="next_landmark"></span></li>
+            <li>Miles Traveled: <span id="miles"></span></li>
+          </ul>
         </div>`;
         document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
         document.getElementById("weather").innerHTML="weather";
