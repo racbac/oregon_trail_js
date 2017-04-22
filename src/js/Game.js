@@ -515,7 +515,8 @@ var Game = {
 
 
 
-   },
+   }
+  },
   start: function(){
     Game.scenes.startScreen();
   },
@@ -560,55 +561,63 @@ var Game = {
     };
   },
 
-  crossRiver: function(method, success) {
+  animateRiver: function(method, success) {
     // setup
-    Game.gameDiv.innerHTML = `<div id="river_crossing" class="ratio-wrapper ratio5-4">\n<canvas id="river_animation" class="ratio-content"></canvas>\n</div>`;
+    Game.gameDiv.innerHTML = `<div>\n<div id="river_crossing" class="ratio-wrapper ratio5-4">\n<canvas id="river_animation" class="ratio-content"></canvas>\n</div>\n</div>`;
     var canvas = document.getElementById("river_animation");
     var ctx = canvas.getContext("2d");
-    var grd; var bank1 = -40; var bank2 = 60;
-    // draw the river at different stages in crossing
+    canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
+
+    var grd; var bank1 = -40; var bank2 = 75; 
+    var width = canvas.clientWidth; var height = canvas.clientHeight; var hypo = 0.866 * height + 0.5 * width;
+    const BLUE = "#42B2FF"; const TAN = "#F6B68E";
+
+    // drawing  the river at different stages in crossing
     var drawRiver = function(pct1, pct2) {
-      grd = ctx.createLinearGradient(0,0,canvas.clientWidth / 2,canvas.clientWidth);
+      grd = ctx.createLinearGradient(0,0, hypo / 2, hypo * 0.866);
       grd.addColorStop(0, TAN);
       grd.addColorStop(pct1 < 0? pct1 = 0 : pct1/=100, TAN); grd.addColorStop(pct1, BLUE);
       grd.addColorStop(pct2 > 100 ? pct2 = 1 : pct2/=100, BLUE); grd.addColorStop(pct2, TAN);
       grd.addColorStop(1, TAN);
-      ctx.fillStyle = grd; ctx.fillRect(0,0,canvas.clientWidth, canvas.clientHeight);
+      ctx.fillStyle = grd; 
+      ctx.fillRect(0,0,width, height);
     };
 
-    // set graphic for method of travel
+    // set and draw graphic for method of travel
+    var imageObj = new Image();
     if (method == "ford") {
-      
+      imageObj.src = './img/wagon_ford.png';
     } else if (method == "caulk") {
-
+      imageObj.src = './img/wagon_caulk.png';
     } else if (method == "ferry") {
-
+      imageObj.src = './img/wagon_ferry.png';
     }
 
-    drawRiver(bank1, bank2);
-    setTimeout(function() { // wait a second before moving
-      var progress = setInterval(function() { // go across the river until mostly across
-        if (bank1 == 25) {
-            clearInterval(progress);
-        } else {
-            drawRiver(bank1, bank2);
-            bank1++, bank2++;
-        }
-      }, 60);
-    }, 1000);
+    //  draw the wagon going across the river
+    imageObj.onload = function() {
+      drawRiver(bank1, bank2);
+      ctx.drawImage(imageObj, width / 4, canvas.clientHeight / 4, width * 0.5, width * 0.3377 );
+      setTimeout(function() { // wait a second before moving
+        var progress = setInterval(function() { // go across the river until mostly across
+          if (bank1 == 25) {
+              clearInterval(progress);
+          } else {
+              drawRiver(bank1, bank2);
+              ctx.drawImage(imageObj, width / 4, canvas.clientHeight / 4, width * 0.5, width * 0.3377);
+              bank1++, bank2++;
+          }
+        }, 60);
+      }, 1000);
+    }
   },
   
   alertBox : function(message) {
 	  
-	if (message == undefined) {
+	if (message == null) {
 		message = "Oh my god everybody is dead! Even the oxen and the children are dead! This was a terrible idea! "+
 		"I think I just broke my leg and caught Ebola!";
 	}
-	
-    var alertBox = document.createElement("alertBox");
-	alertBox.setAttribute('id', 'AlertBox');
-	alertBox.innerHTML = message;
-    document.getElementById("game").appendChild(alertBox);
+	Game.gameDiv.innerHTML += `<div id="AlertBox">` + message + `</div>\n`;
 	
 	Game.waitForInput(null,null,Game.removeAlertBox);
   },
@@ -626,7 +635,6 @@ var Game = {
       Game.gameDiv.innerHTML="You got a"+fish[fishNum];
       Game.gameCaravan.food+=weights[fishNum];
 
-    }
   }
 };
 
