@@ -459,7 +459,7 @@ var Game = {
           </ul>\n
         </div>`;
         document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-        document.getElementById("weather").innerHTML="weather";
+        document.getElementById("weather").innerHTML="Weather";
         document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
         document.getElementById("food").innerHTML=Game.gameCaravan.food;
         document.getElementById("next_landmark").innerHTML='000';
@@ -475,7 +475,7 @@ var Game = {
             Game.date.setDate(Game.date.getDate()+1);
             timeOfDay=0;
             /*generate the conditions for the day*/
-            var weather="warm";
+            var weather=getWeather(Game.date.getMonth());
             var event=null;//randomEvent();
             /*update food and health*/
 
@@ -624,7 +624,7 @@ var Game = {
 	}
 	Game.gameDiv.innerHTML += `<p id="AlertBox" class="white_black">` + message + `</p>\n`;
 	
-	Game.waitForInput(null,null,function() {Game.removeAlertBox(); returnScene();});
+	Game.waitForInput(null,null,function() {Game.removeAlertBox(); returnScene() || null;});
   },
   
   removeAlertBox : function() {
