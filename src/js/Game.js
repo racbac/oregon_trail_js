@@ -220,7 +220,7 @@ var Game = {
             <p class=\"prompt\">Press ENTER to continue</p>\n
           </div>\n`;
         thestore = new Store(20, 10, 2, 10, 10, 10, 0.2);
-        var storeFront = function(){
+        var storeFront = function(){ // start storeFront()
           
           Game.gameDiv.innerHTML =
           `<div id="mattstore" class="white_black">\n
@@ -247,26 +247,13 @@ var Game = {
             </div>\n
           </div>\n`;
           var validationFunc=function(input){
-            return input==""||(+input&&+input>0&&+input<6);
+            return (input==""||(+input&&+input>0&&+input<6));
           }
           Game.waitForInput([13/*enter*/,32/*space*/],validationFunc,function(choice){
-            Game.gameDiv.innerHTML=
-            `<div id="mattstore" class="white_black">\n
-              <p>\n
-                Matt's General Store<br>\n
-                Independence, Missouri<br>\n
-              </p>\n
-              <p id="matt_advice">\n
-              </p>\n
-              <p>\n
-
-                Bill so far: $<span id="bill"></span>\n
-              </p>\n
-            </div>`;
-            document.getElementById("bill").innerHTML="0.00";
             var mattAdvice="";
             var mattFunc=null;
             var validationFunc=null;
+            Game.waitForInput(null,validationFunc,mattFunc);
             if(choice == 1){
               mattAdvice=
                 `There are 2 oxen in a yoke. I recommend at least 3 yoke, but you need as least one yoke. I charge $40 a yoke.<br>\n
@@ -339,21 +326,39 @@ var Game = {
                 });
               }
             }
-            else{
-              Game.gameCaravan.purchase("oxen", thestore.oxen.price, thestore.oxen.amt);
-              Game.gameCaravan.purchase("axles", thestore.axles.price, thestore.axles.amt);
-              Game.gameCaravan.purchase("clothing", thestore.clothing.price, thestore.clothing.amt);
-              Game.gameCaravan.purchase("wheels", thestore.wheels.price, thestore.wheels.amt);
-              Game.gameCaravan.purchase("tongues", thestore.tongues.price, thestore.tongues.amt);
-              Game.gameCaravan.purchase("food", thestore.food.price, thestore.food.amt);
-              Game.gameCaravan.purchase("bait", thestore.bait.price, thestore.bait.amt);
-              Game.scenes.Journey();
-              return;
+            else{ // checkout
+              if (thestore.oxen.amt > 0) { // they must have purchased oxen to leave the store
+                Game.gameCaravan.purchase("oxen", thestore.oxen.price, thestore.oxen.amt);
+                Game.gameCaravan.purchase("axles", thestore.axles.price, thestore.axles.amt);
+                Game.gameCaravan.purchase("clothing", thestore.clothing.price, thestore.clothing.amt);
+                Game.gameCaravan.purchase("wheels", thestore.wheels.price, thestore.wheels.amt);
+                Game.gameCaravan.purchase("tongues", thestore.tongues.price, thestore.tongues.amt);
+                Game.gameCaravan.purchase("food", thestore.food.price, thestore.food.amt);
+                Game.gameCaravan.purchase("bait", thestore.bait.price, thestore.bait.amt);
+                Game.scenes.Journey();
+                return;
+              } else {
+                Game.alertBox("You must have at least one ox to pull your wagon.", storeFront); return;
+              }
             }
+            Game.gameDiv.innerHTML=
+            `<div id="mattstore" class="white_black">\n
+              <p>\n
+                Matt's General Store<br>\n
+                Independence, Missouri<br>\n
+              </p>\n
+              <p id="matt_advice">\n
+              </p>\n
+              <p>\n
+
+                Bill so far: $<span id="bill"></span>\n
+              </p>\n
+            </div>`;
+            document.getElementById("bill").innerHTML="0.00";
             document.getElementById("matt_advice").innerHTML=mattAdvice + '<span id="input"></span>';
             Game.waitForInput(null,validationFunc,mattFunc);
-          });
-        };
+          }); // end waitForInput(choice)
+        }; // end storeFront()
         Game.waitForInput(null,null,storeFront);
       });
     },
@@ -611,15 +616,15 @@ var Game = {
     }
   },
   
-  alertBox : function(message) {
+  alertBox : function(message, returnScene) {
 	  
 	if (message == null) {
 		message = "Oh my god everybody is dead! Even the oxen and the children are dead! This was a terrible idea! "+
 		"I think I just broke my leg and caught Ebola!";
 	}
-	Game.gameDiv.innerHTML += `<div id="AlertBox">` + message + `</div>\n`;
+	Game.gameDiv.innerHTML += `<p id="AlertBox" class="white_black">` + message + `</p>\n`;
 	
-	Game.waitForInput(null,null,Game.removeAlertBox);
+	Game.waitForInput(null,null,function() {Game.removeAlertBox(); returnScene();});
   },
   
   removeAlertBox : function() {
