@@ -1,7 +1,56 @@
 var Game = {
   gameCaravan: new Caravan(),
   date: new Date(),
+
+  miles: 0,
+
   gameDiv: document.getElementById("game"),
+
+  start: function(){
+    Game.scenes.startScreen();
+  },
+
+  waitForInput: function(enterKeys,validationFunc,callback=function(){}){
+    enterKeys=enterKeys||[13];
+    validationFunc=validationFunc||function(){return true};
+    var input="";
+
+    element=document.getElementById("input")||{};
+    element.innerHTML = "_";
+    document.onkeypress=function(event){
+      var x = event.charCode || event.keyCode;   // Get the Unicode value
+      if(x==13){//ignore enter
+        return;
+      }
+      var y = String.fromCharCode(x);
+
+      if(validationFunc(input+y)){
+        input=input+y;
+        element.innerHTML=input+"_";
+      }
+    }
+    document.onkeydown=function(event){
+      var x = event.charCode || event.keyCode;   // Get the Unicode value
+      if(x==8)//backspace pressed
+      {
+        input=input.slice(0,-1);
+        element.innerHTML=input;
+      }
+      else if((x == 13||enterKeys.includes(x)) && validationFunc(input) )//enter key pressed and input valid
+      {
+        document.onkeydown=null;
+        document.onkeypress=null;
+        element.innerHTML = element.innerHTML.substring(0, element.innerHTML.length - 1);
+        callback(input);
+      }else if(x==8)//backspace pressed
+      {
+        input=input.slice(0,-1);
+        element.innerHTML=input+"_";
+
+      }
+    };
+  },
+
   scenes: {
     startScreen: function(){
       Game.gameDiv.innerHTML=
@@ -100,11 +149,11 @@ var Game = {
         </div>`;
 
       Game.waitForInput(null,function(value) {return (value.length > 0)},function(leadername){
-        
+
         // Add the leader to the caravan
         var leader = new Person(leadername);
         Game.gameCaravan.addPerson(leader);
-        
+
         document.getElementById("enterNames").innerHTML =
           ` <div class="white_black">\n
               <p>What are the first names of the four other members in your party?</p>\n
@@ -118,7 +167,7 @@ var Game = {
             var nameFunc=function(name){
               var inputEle=document.getElementById("input");
               var index=+inputEle.parentNode.id[3];
-              
+
               if (name == "") { // if they're done entering names, autofill
                 for (var i = index; i <= 4; i++) {
                   Game.gameCaravan.addPerson(new Person(randomName()));
@@ -131,7 +180,7 @@ var Game = {
               // Add a new peron to the caravan for each input name
               var newPerson = new Person(name);
               Game.gameCaravan.addPerson(newPerson);
-              
+
               if(index==4){ // if they've entered all the names
                 Game.scenes.chooseDepartureMonth();
                 return;
@@ -220,9 +269,10 @@ var Game = {
             <p class=\"prompt\">Press ENTER to continue</p>\n
           </div>\n`;
         thestore = new Store(20, 10, 2, 10, 10, 10, 0.2);
+
         var storeFront = function(){ // start storeFront()
-          
           Game.gameDiv.innerHTML =
+
           `<div id="mattstore" class="white_black">\n
               <div>\n
                 <p>Mal's General Store<br>\n
@@ -362,21 +412,21 @@ var Game = {
         Game.waitForInput(null,null,storeFront);
       });
     },
-  
+
     BuySupply:function(){
 
     },
 	CrossRiver:function(width, depth) {
-		
+
 		var message = "You must cross the river in order to continue. The river at this point is currently " + width +
 			" feet wide and " + depth + " feet deep in the middle."
-		
+
 		document.getElementById("game").innerHTML =
         `<div id="cross_river_message">
           <p>' + message + '</p>
           <p class="prompt">Press ENTER to continue</p>\n
         </div>`;
-		
+
 		Game.waitForInput(null, null, null);
 
 		document.getElementById("game").innerHTML =
@@ -398,10 +448,10 @@ var Game = {
       return Number.isInteger(+input) && +input>0 && +input<5;
     }
     Game.waitForInput(null,validationFunc,function(choice){
-		  
+
       // Ford the river
       if(choice == 1){
-        
+
         // A depth of more than 2.5 feet is where risk starts
         if (depth > 2.5) {
 
@@ -409,13 +459,13 @@ var Game = {
           var accidentChance = (depth - 2.5) * 50;
           var chance = randRange(1, 100);
           if (chance < accidentChance) {
-            
+
             // TODO: Display the message to the screen, showing what was lost
-            Game.alertBox(wagonTipOver(gameCaravan));  
+            Game.alertBox(wagonTipOver(gameCaravan));
             }
         }
       }
-      
+
       //Float accross the river
       else if(choice ==2){
         //play an animation?
@@ -423,7 +473,7 @@ var Game = {
         if (chance < 10) {
 
         }
-        
+
       }
       else if(choice == 3){
         //take the ferry
@@ -436,8 +486,8 @@ var Game = {
       }
     });
   },
-		
-	
+
+
     Journey:function(){
       Game.gameDiv.innerHTML =
 
@@ -489,7 +539,7 @@ var Game = {
 
             if(event){
               clearInterval(travelLoop);
-              waitForInput(null,null,game.scenes.EnterMenu);
+              waitForInput(null,null,game.scenes.TrailMenu);
               return;
             }
           }
@@ -505,68 +555,64 @@ var Game = {
           }
 
         }
-        var travelLoop=setInterval(travelFunc,3000/24); /*call travelFunc once per game hour, 3 game day per second*/
+        var travelLoop=setInterval(travelFunc,3000/24); /*call travelFunc once per game hour, 3 seconds per game day*/
         Game.waitForInput(null,null,function(){
           clearInterval(travelLoop);
-          Game.scenes.EnterMenu();
+          Game.scenes.TrailMenu();
         });
     },
-    EnterMenu: function(){
-      Game.gameDiv.innerHTML="<p>menu will added here later. Enter to contunue.</p>";
-      Game.waitForInput(null,null,Game.scenes.Journey);
+
+    TrailMenu: function(){
+      document.getElementById("game").innerHTML=`
+        <div id=trail_menu class="centered_content white_black">
+          <div id="date">date/date/date</div>
+          <div id="conditions">
+            Weather:<br>
+            Health:<br>
+            Pace:<br>
+            Rations:<br>
+          </div>
+          <div id="options">
+            You May:
+            <ol>
+              <li>Contunue on trail</li>
+              <li>Check supplies (not yet implemented)</li>
+              <li>Look at map</li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ol>
+          </div>
+          What is your choice?<span id="input"></span>
+        </div>`;
+      var validationFunc=function(input){
+        console.log(input)
+        return  +input>0 && +input<9;
+      }
+      Game.waitForInput(null,validationFunc,function(input){
+        if(input==1)
+          Game.scenes.Journey();
+        else if(input==3)
+          Game.scenes.ShowMap();
+        else
+          Game.scenes.TrailMenu();
+      });
     },
-	
+    CheckSupply: function(){
+
+    },
+    ShowMap: function(){
+      Map.display(Game.miles);
+      Game.waitForInput(null,null,Game.scenes.TrailMenu);
+    },
+
     LandMark: function(landmarkname){
 
+   },
 
-
-   }
-  },
-  start: function(){
-    Game.scenes.startScreen();
-  },
-  waitForInput: function(enterKeys,validationFunc,callback=function(){}){
-    enterKeys=enterKeys||[13];
-    validationFunc=validationFunc||function(){return true};
-    var input="";
-
-    element=document.getElementById("input")||{};
-    element.innerHTML = "_";
-    document.onkeypress=function(event){
-      var x = event.charCode || event.keyCode;   // Get the Unicode value
-      if(x==13){//ignore enter
-        return;
-      }
-      var y = String.fromCharCode(x);
-
-      if(validationFunc(input+y)){
-        input=input+y;
-        element.innerHTML=input+"_";
-      }
-    }
-    document.onkeydown=function(event){
-      var x = event.charCode || event.keyCode;   // Get the Unicode value
-      if(x==8)//backspace pressed
-      {
-        input=input.slice(0,-1);
-        element.innerHTML=input;
-      }
-      else if((x == 13||enterKeys.includes(x)) && validationFunc(input) )//enter key pressed and input valid
-      {
-        document.onkeydown=null;
-        document.onkeypress=null;
-        element.innerHTML = element.innerHTML.substring(0, element.innerHTML.length - 1);
-        callback(input);
-      }else if(x==8)//backspace pressed
-      {
-        input=input.slice(0,-1);
-        element.innerHTML=input+"_";
-
-      }
-    };
-  },
-
-  animateRiver: function(method, success) {
+    animateRiver: function(method, success) {
     // setup
     Game.gameDiv.innerHTML = `<div>\n<div id="river_crossing" class="ratio-wrapper ratio5-4">\n<canvas id="river_animation" class="ratio-content"></canvas>\n</div>\n</div>`;
     var canvas = document.getElementById("river_animation");
@@ -623,12 +669,11 @@ var Game = {
 		"I think I just broke my leg and caught Ebola!";
 	}
 	Game.gameDiv.innerHTML += `<p id="AlertBox" class="white_black">` + message + `</p>\n`;
-	
 	Game.waitForInput(null,null,function() {Game.removeAlertBox(); returnScene() || null;});
   },
-  
+
   removeAlertBox : function() {
-	  
+
     document.getElementById("AlertBox").remove();
   },
   fishingGame:function(){

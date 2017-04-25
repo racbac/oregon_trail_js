@@ -159,6 +159,11 @@ main > div {
     height: 55%;
 }
 
+
 #river_crossing {
     width: 50%;
+}
+
+#map{
+  background-image: url("img/map.png");
 }
