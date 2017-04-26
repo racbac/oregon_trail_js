@@ -103,18 +103,18 @@ Caravan.prototype.set_pace = function(new_pace) {
 // purchase
 // takes in name of the item as a string, item's cost as a float, and how many of the item to purchase as an int
 // If the purchase isn't too expensive or quantity too much, subtracts from the Caravan's money and adds to its supplies
-Caravan.prototype.purchase = function(item, cost, quantity) {
+Caravan.prototype.purchaseItems = function(purchases) {
     // costs more than we have
-    if (cost * quantity > this.money) {
-        return 0;
-    } else if (quantity + this[item] > MAXIMUM[item.toUpperCase()]) {
-        // cannot carry that many of that item
-        return 0;
-    } else {
-        // add item to supplies
-        this[item] += quantity;
-        this.money -= quantity * cost;
+    var total = 0.00;
+    for (var i = 0; i < purchases.length; i++) { // make sure they can make the purchase.quantity;
+        total += purchases[i].quantity * purchases[i].cost;
+        if (total > this.money) { return false; }
     }
+    for (var j = 0; j < purchases.length; j++) { // make the purchases
+        this[purchases[j].item] += purchases[j].quantity;
+    }
+    this.money -= total;
+    return true;
 }
 
 // Return the average health

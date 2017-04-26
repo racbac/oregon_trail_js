@@ -377,15 +377,21 @@ var Game = {
               }
             }
             else{ // checkout
-              if (thestore.oxen.amt > 0) { // they must have purchased oxen to leave the store
-                Game.gameCaravan.purchase("oxen", thestore.oxen.price, thestore.oxen.amt);
-                Game.gameCaravan.purchase("axles", thestore.axles.price, thestore.axles.amt);
-                Game.gameCaravan.purchase("clothing", thestore.clothing.price, thestore.clothing.amt);
-                Game.gameCaravan.purchase("wheels", thestore.wheels.price, thestore.wheels.amt);
-                Game.gameCaravan.purchase("tongues", thestore.tongues.price, thestore.tongues.amt);
-                Game.gameCaravan.purchase("food", thestore.food.price, thestore.food.amt);
-                Game.gameCaravan.purchase("bait", thestore.bait.price, thestore.bait.amt);
-                Game.scenes.Journey();
+              if (thestore.oxen.quantity > 0) { // they must have purchased oxen to leave the store
+                if (Game.gameCaravan.purchaseItems(thestore.generate_bill())) { // make sure they have enough money
+                  Game.scenes.Journey(); 
+                } else {
+                  Game.alertBox("You don't have enough money to pay your bill.", storeFront); return;
+                }
+                /*Game.gameCaravan.purchase("oxen", thestore.oxen.cost, thestore.oxen.quantity);
+                Game.gameCaravan.purchase("axles", thestore.axles.cost, thestore.axles.quantity);
+                Game.gameCaravan.purchase("clothing", thestore.clothing.cost, thestore.clothing.quantity);
+                Game.gameCaravan.purchase("wheels", thestore.wheels.cost, thestore.wheels.quantity);
+                Game.gameCaravan.purchase("tongues", thestore.tongues.cost, thestore.tongues.quantity);
+                Game.gameCaravan.purchase("food", thestore.food.cost, thestore.food.quantity);
+                Game.gameCaravan.purchase("bait", thestore.bait.cost, thestore.bait.quantity);
+                Game.scenes.Journey();*/
+                
                 return;
               } else {
                 Game.alertBox("You must have at least one ox to pull your wagon.", storeFront); return;
