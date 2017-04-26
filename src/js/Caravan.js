@@ -10,9 +10,9 @@ const HEALTH = {
 // Pace object enables access to each pace level's numerical and string values
 // rate is the percentage of maximum distance per day that pace corresponds to. max distance depends on how many oxen you have, with a max of 40 mi/day
 const PACE = {
-    STEADY: {rate: 0.5, string: "steady", description: "You travel about 8 hours a day, taking frequent rests. You take care not to get too tired."},
-    STRENUOUS: {rate: 0.75, string: "strenuous", description: "You travel about 12 hours a day, starting just after sunrise and stopping shortly before sunset. You stop to rest only when necessary. You finish each day feeling very tired."},
-    GRUELING: {rate: 1, string: "grueling", description: "You travel about 16 hours a day, starting before sunrise and continuing until dark. You almost never stop to rest. You do not get enough sleep at night. You finish each day feeling absolutely exhausted, and your health suffers."}
+    STEADY: {rate: 8, string: "steady", description: "You travel about 8 hours a day, taking frequent rests. You take care not to get too tired."},
+    STRENUOUS: {rate: 12, string: "strenuous", description: "You travel about 12 hours a day, starting just after sunrise and stopping shortly before sunset. You stop to rest only when necessary. You finish each day feeling very tired."},
+    GRUELING: {rate: 16, string: "grueling", description: "You travel about 16 hours a day, starting before sunrise and continuing until dark. You almost never stop to rest. You do not get enough sleep at night. You finish each day feeling absolutely exhausted, and your health suffers."}
 }
 
 const OCCUPATION = {
@@ -179,4 +179,14 @@ Caravan.prototype.removePerson = function(person) {
 			this.family.splice(i,1);
 		}
 	}
+}
+
+Caravan.prototype.getMph = function() {
+    var mph;
+    if (this.oxen > 0) {
+        mph = Math.floor(this.oxen * 0.625 + this.injured_oxen * 0.5); 
+    } else {
+        mph = 3;
+    }
+    return (mph > 40) ?  40 : mph;
 }

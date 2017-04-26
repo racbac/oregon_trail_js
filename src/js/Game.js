@@ -1,7 +1,7 @@
 var Game = {
   gameCaravan: new Caravan(),
   date: new Date(),
-
+  weather: "warm",
   miles: 0,
 
   gameDiv: document.getElementById("game"),
@@ -383,15 +383,6 @@ var Game = {
                 } else {
                   Game.alertBox("You don't have enough money to pay your bill.", storeFront); return;
                 }
-                /*Game.gameCaravan.purchase("oxen", thestore.oxen.cost, thestore.oxen.quantity);
-                Game.gameCaravan.purchase("axles", thestore.axles.cost, thestore.axles.quantity);
-                Game.gameCaravan.purchase("clothing", thestore.clothing.cost, thestore.clothing.quantity);
-                Game.gameCaravan.purchase("wheels", thestore.wheels.cost, thestore.wheels.quantity);
-                Game.gameCaravan.purchase("tongues", thestore.tongues.cost, thestore.tongues.quantity);
-                Game.gameCaravan.purchase("food", thestore.food.cost, thestore.food.quantity);
-                Game.gameCaravan.purchase("bait", thestore.bait.cost, thestore.bait.quantity);
-                Game.scenes.Journey();*/
-                
                 return;
               } else {
                 Game.alertBox("You must have at least one ox to pull your wagon.", storeFront); return;
@@ -515,14 +506,12 @@ var Game = {
           </ul>\n
         </div>`;
         document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-        document.getElementById("weather").innerHTML = getWeather(Game.date.getMonth());
+        document.getElementById("weather").innerHTML = Game.weather = getWeather(Game.date.getMonth());
         document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
         document.getElementById("food").innerHTML=Game.gameCaravan.food;
         document.getElementById("next_landmark").innerHTML='000';
         document.getElementById("miles").innerHTML=Game.miles;
         var timeOfDay=0;
-        var HoursPerDay=8;
-        var MPH=3;
         var travelFunc=function(){//called once per game Hour
           timeOfDay++;
 
@@ -536,7 +525,7 @@ var Game = {
 
             /*update html for event*/
             document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-            document.getElementById("weather").innerHTML=getWeather(Game.date.getMonth());
+            document.getElementById("weather").innerHTML= Game.weather = getWeather(Game.date.getMonth());
             document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
             document.getElementById("food").innerHTML=Game.gameCaravan.updateFood();
             document.getElementById("next_landmark").innerHTML='000';
@@ -548,13 +537,13 @@ var Game = {
             }
           }
           if(timeOfDay==5){//start traveling at 5am
-            /*set oxen animation to running and the background to scroll*/
+            /*set oxen animation to running*/
             document.getElementById("oxen").src="./img/oxen_walking.gif";
           }
-          else if(timeOfDay== 5+HoursPerDay){
-            Game.miles+=MPH*HoursPerDay;
+          else if(timeOfDay== 5+Game.gameCaravan.pace.rate){
+            Game.miles+=Game.gameCaravan.getMph()*Game.gameCaravan.pace.rate;
             document.getElementById("miles").innerHTML=Game.miles;
-            /*set oxen animation to stopped and the background to stopped*/
+            /*set oxen animation to stopped*/
             document.getElementById("oxen").src = "./img/oxen_standing.png";
           }
 
@@ -568,29 +557,29 @@ var Game = {
 
     TrailMenu: function(){
       document.getElementById("game").innerHTML=`
-        <div id=trail_menu class="centered_content white_black">
-          <div id="date">date/date/date</div>
-          <div id="conditions">
-            Weather:<br>
-            Health:<br>
-            Pace:<br>
-            Rations:<br>
-          </div>
-          <div id="options">
+        <div id=trail_menu class="centered_content white_black">\n
+          <div id="date">`+ MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() +`</div>\n
+          <div id="conditions">\n
+            Weather: `+ Game.weather +`<br>\n
+            Health: `+ Game.gameCaravan.health.string +`<br>\n
+            Pace: `+ Game.gameCaravan.pace.string +`<br>\n
+            Rations: `+ Game.gameCaravan.rations.string +`<br>\n
+          </div>\n
+          <div id="options">\n
             You May:
-            <ol>
-              <li>Continue on trail</li>
-              <li>Check supplies</li>
-              <li>Look at map</li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-            </ol>
-          </div>
-          What is your choice?<span id="input"></span>
-        </div>`;
+            <ol>\n
+              <li>Continue on trail</li>\n
+              <li>Check supplies</li>\n
+              <li>Look at map</li>\n
+              <li></li>\n
+              <li></li>\n
+              <li></li>\n
+              <li></li>\n
+              <li></li>\n
+            </ol>\n
+          </div>\n
+          What is your choice?<span id="input"></span>\n
+        </div>\n`;
       var validationFunc=function(input){
         console.log(input)
         return  +input>0 && +input<9;
