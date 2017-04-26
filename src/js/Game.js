@@ -283,14 +283,14 @@ var Game = {
                 <div id="matt_img"></div>\n
                 <div>\n
                   <ol>\n
-                    <li>Oxen<span id="oxen_bill" style="float: right">$`+thestore.item_bill("oxen").toFixed(2)+`</span></li>\n
-                    <li>Food<span id="food_bill" style="float: right">$`+thestore.item_bill("food").toFixed(2)+`</span></li>\n
-                    <li>Clothing<span id="clothing_bill" style="float: right">$`+thestore.item_bill("clothing").toFixed(2)+`</span></li>\n
-                    <li>Bait<span id="bait_bill" style="float: right">$`+thestore.item_bill("bait").toFixed(2)+`</span></li>\n
-                    <li>Spare Parts<span id="spare_bill" style="float: right">$`+thestore.item_bill("axles", "tongues", "wheels").toFixed(2)+`</span></li>\n
+                    <li>Oxen<span id="oxen_bill">$`+thestore.item_bill("oxen").toFixed(2)+`</span></li>\n
+                    <li>Food<span id="food_bill">$`+thestore.item_bill("food").toFixed(2)+`</span></li>\n
+                    <li>Clothing<span id="clothing_bill">$`+thestore.item_bill("clothing").toFixed(2)+`</span></li>\n
+                    <li>Bait<span id="bait_bill">$`+thestore.item_bill("bait").toFixed(2)+`</span></li>\n
+                    <li>Spare Parts<span id="spare_bill">$`+thestore.item_bill("axles", "tongues", "wheels").toFixed(2)+`</span></li>\n
                   </ol>\n
-                  <p>Total Bill: <span id="total_bill" style="float: right">$`+thestore.bill.toFixed(2)+`</span></p>\n
-                  <p>Amount you have:<span id="money" style="float: right">$`+(Game.gameCaravan.money - thestore.bill).toFixed(2)+`</span></p>\n
+                  <p>Total Bill: <span id="total_bill">$`+thestore.bill.toFixed(2)+`</span></p>\n
+                  <p>Amount you have:<span id="money">$`+(Game.gameCaravan.money - thestore.bill).toFixed(2)+`</span></p>\n
                   <p>Which item would you like to buy? <span id="input"></span></p>\n
                   <p class=\"prompt\">Press SPACE to leave store</p>\n
                 </div>\n
@@ -499,7 +499,7 @@ var Game = {
           <div id="ground"></div>\n
           <div id="status">\n
             <p>press ENTER to size up the situation</p>\n
-            <ul>\n
+            <ul class="plain_list">\n
             <li>Date: <span id="date"></span></li>\n
             <li>Weather: <span id="weather"></span></li>\n
             <li>Health: <span id="health"></span></li>\n
@@ -509,7 +509,7 @@ var Game = {
           </ul>\n
         </div>`;
         document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-        document.getElementById("weather").innerHTML="Weather";
+        document.getElementById("weather").innerHTML = getWeather(Game.date.getMonth());
         document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
         document.getElementById("food").innerHTML=Game.gameCaravan.food;
         document.getElementById("next_landmark").innerHTML='000';
@@ -524,17 +524,15 @@ var Game = {
 
             Game.date.setDate(Game.date.getDate()+1);
             timeOfDay=0;
-            /*generate the conditions for the day*/
-            var weather=getWeather(Game.date.getMonth());
             var event=null;//randomEvent();
             /*update food and health*/
 
 
             /*update html for event*/
             document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-            document.getElementById("weather").innerHTML=weather;
+            document.getElementById("weather").innerHTML=getWeather(Game.date.getMonth());
             document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
-            document.getElementById("food").innerHTML=Game.gameCaravan.food;
+            document.getElementById("food").innerHTML=Game.gameCaravan.updateFood();
             document.getElementById("next_landmark").innerHTML='000';
 
             if(event){
@@ -575,7 +573,7 @@ var Game = {
           <div id="options">
             You May:
             <ol>
-              <li>Contunue on trail</li>
+              <li>Continue on trail</li>
               <li>Check supplies (not yet implemented)</li>
               <li>Look at map</li>
               <li></li>
@@ -594,6 +592,8 @@ var Game = {
       Game.waitForInput(null,validationFunc,function(input){
         if(input==1)
           Game.scenes.Journey();
+        else if (input==2)
+          Game.scenes.CheckSupply();
         else if(input==3)
           Game.scenes.ShowMap();
         else
@@ -601,7 +601,22 @@ var Game = {
       });
     },
     CheckSupply: function(){
-
+      Game.gameDiv.innerHTML = 
+      `<div id="check_supplies" class="centered_content white_black">\n
+        <p>Your Supplies</p>\n
+        <ul>\n
+          <li>oxen<span>`+ Game.gameCaravan.oxen +`</span></li>\n
+          <li>sets of clothing<span>`+ Game.gameCaravan.clothing +`</span></li>\n
+          <li>bait<span>`+ Game.gameCaravan.bait +`</span></li>\n
+          <li>wagon wheels<span>`+ Game.gameCaravan.wheels +`</span></li>\n
+          <li>wagon axles<span>`+ Game.gameCaravan.axles +`</span></li>\n
+          <li>wagon tongues<span>`+ Game.gameCaravan.tongues +`</span></li>\n
+          <li>pounds of food<span`+ Game.gameCaravan.food +`></span></li>\n
+          <li>money left<span>$`+ Game.gameCaravan.money.toFixed(2) +`</span></li>\n
+        </ul>\n
+        <p class="prompt">Press ENTER to continue</p>
+      </div>`;
+      Game.waitForInput(null, null, Game.scenes.TrailMenu);
     },
     ShowMap: function(){
       Map.display(Game.miles);

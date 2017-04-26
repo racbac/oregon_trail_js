@@ -57,11 +57,21 @@ function Caravan() {
     this.injured_oxen = 0;
     this.clothing = 0;
     this.food = 0;
-    this.boxes_ammo = 0;
+    this.bait = 0;
 	
 	this.randomNames = ["Lupoli", "Chang", "Marron", "Hrabowski", "Kalpakis", 
 	"Bill Gates", "Alan Turing", "Steve Jobs", "Grace Hopper", "Ada Lovelace", 
 	"Mr Anderson"];
+}
+
+Caravan.prototype.updateFood = function() {
+    var eaten = this.rations.pounds * this.family.length;
+    if (this.food >= eaten) {
+        this.food -= this.rations.pounds * this.family.length;
+    } else { 
+        this.food = 0;
+    }
+    return this.food;
 }
 
 Caravan.prototype.generateRandomName = function() {

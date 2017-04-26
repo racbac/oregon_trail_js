@@ -17,7 +17,7 @@ Store.prototype.buyItem = function(itemName,caravan,amt){
 
 Store.prototype.adjust_bill = function(item, new_amt) {
     this.bill -= this[item].price * this[item].amt;
-    this[item].amt = new_amt;
+    this[item].amt = +new_amt;
     this.bill += this[item].price * this[item].amt;
 }
 
