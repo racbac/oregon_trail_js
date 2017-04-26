@@ -580,7 +580,7 @@ var Game = {
             You May:
             <ol>
               <li>Continue on trail</li>
-              <li>Check supplies (not yet implemented)</li>
+              <li>Check supplies</li>
               <li>Look at map</li>
               <li></li>
               <li></li>
