@@ -159,8 +159,9 @@ ul.plain_list { list-style-type: none; }
 }
 
 
-#river_crossing {
+#river_crossing > div {
     width: 50%;
+    margin-top: 11%;
 }
 
 #map{

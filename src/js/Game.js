@@ -624,7 +624,7 @@ var Game = {
 
     animateRiver: function(method, success) {
       // setup
-      Game.gameDiv.innerHTML = `<div>\n<div id="river_crossing" class="ratio-wrapper ratio5-4">\n<canvas id="river_animation" class="ratio-content"></canvas>\n</div>\n</div>`;
+      Game.gameDiv.innerHTML = `<div id="river_crossing" class="centered_content">\n<div class="ratio-wrapper ratio5-4">\n<canvas id="river_animation" class="ratio-content"></canvas>\n</div>\n</div>`;
       var canvas = document.getElementById("river_animation");
       var ctx = canvas.getContext("2d");
       canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
