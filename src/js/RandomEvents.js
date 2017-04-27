@@ -172,8 +172,10 @@ function oxenWanderedOff(caravan) {
 
 function oxenSick(caravan) {
 	
-	//TODO - Make an oxen get sick
-	return "One of your oxen has gotten sick";
+	if (caravan.sickenOxen()) {
+		return "One of your oxen has gotten sick";
+	}
+	return null;
 }
 
 function suppliesStolen(caravan) {
@@ -264,7 +266,7 @@ function getDisease(caravan) {
 		// Reduce their health by 40
 		victim.sicken(40);
 		
-		var diseaseNames = ["cholera", "dysentary", "typhoid fever"];
+		var diseaseNames = ["cholera", "dysentery", "typhoid fever"];
 		var chosenDisease = diseaseNames[Math.floor(Math.random() * 3)];
 		
 		return victim.name + " is sick with " + chosenDisease;

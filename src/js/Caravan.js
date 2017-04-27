@@ -184,9 +184,17 @@ Caravan.prototype.removePerson = function(person) {
 Caravan.prototype.getMph = function() {
     var mph;
     if (this.oxen > 0) {
-        mph = Math.floor(this.oxen * 0.625 + this.injured_oxen * 0.5); 
+        mph = (this.oxen - this.injured_oxen) * 0.625 + this.injured_oxen * 0.5; 
     } else {
         mph = 3;
     }
     return (mph > 40) ?  40 : mph;
+}
+
+Caravan.prototype.sickenOxen = function() {
+    if (this.oxen > 0 && this.injured_oxen < this.oxen) {
+        this.injured_oxen++;
+        return true;
+    }
+    return false;
 }
