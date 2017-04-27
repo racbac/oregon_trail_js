@@ -519,22 +519,42 @@ var Game = {
 
             Game.date.setDate(Game.date.getDate()+1);
             timeOfDay=0;
-            var event=null;//randomEvent();
-            /*update food and health*/
 
+            /*generate the conditions for the day*/
+            var weather=getWeather(Game.date.getMonth());
+            //var event=null;//randomEvent();
+		    
+			var eventChance = (Math.random() * 10);
 
-            /*update html for event*/
-            document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
-            document.getElementById("weather").innerHTML= Game.weather = getWeather(Game.date.getMonth());
-            document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
-            document.getElementById("food").innerHTML=Game.gameCaravan.updateFood();
-            document.getElementById("next_landmark").innerHTML='000';
+			// 50% chance of event occurring each day
+			if (eventChance < 5) {
+				
+			  var eventResult = randomEvent(Game.gameCaravan);
 
+			  // Random event will return null if nothing happened
+			  if (eventResult != null) {
+
+        /*update html for event*/
+        document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
+        document.getElementById("weather").innerHTML= Game.weather = getWeather(Game.date.getMonth());
+        document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
+        document.getElementById("food").innerHTML=Game.gameCaravan.updateFood();
+        document.getElementById("next_landmark").innerHTML='000';
+
+				Game.alertBox(eventResult, Game.scenes.Journey);
+				
+				clearInterval(travelLoop);
+                Game.waitForInput(null,null,Game.scenes.Journey);
+                return;
+			  }
+			}
+			/*
             if(event){
               clearInterval(travelLoop);
               waitForInput(null,null,game.scenes.TrailMenu);
               return;
             }
+			*/
           }
           if(timeOfDay==5){//start traveling at 5am
             /*set oxen animation to running*/
@@ -687,16 +707,47 @@ var Game = {
 
     document.getElementById("AlertBox").remove();
   },
+  
+  dialogBox : function(dialog, returnScene) {
+    Game.gameDiv.innerHTML += `<p id="DialogBox" class="white_black">` + dialog + `</p>\n`;
+	Game.waitForInput(null,null,function() {Game.removeDialogBox(); returnScene() || null;}); 
+  },
+  
+  removeDialogBox : function() {
+    document.getElementById("DialogBox").remove();
+  },
+  
   fishingGame:function(){
-    var fish=["sturgeon","salmon","steelhead","trout","catfish","bass","sunfish","barracuda","flounder"];
-    var weights=[50,10,27,27,40,12,1,20,26];
-    var chanceToCatch=Math.floor((Math.random()*10)+1);
-    var fishNum=Math.floor((Math.random()*9));
-
-      Game.gameDiv.innerHTML="You got a"+fish[fishNum];
-      Game.gameCaravan.food+=weights[fishNum];
-
-  }
+    if (Game.gameCaravan.bait == 0) {
+	  
+	  Game.alertBox("You have no bait to fish with", Game.scenes.journey);
+	  return;
+	}
+	
+    var fish = ["sturgeon","salmon","steelhead","trout","catfish","bass","sunfish","barracuda","flounder"];
+    var weights = [50,10,27,27,40,12,1,20,26];
+	
+    var chanceToCatch = Math.floor((Math.random()*10)+1);
+	var fishNum = Math.floor((Math.random()*9));
+	
+	if (chanceToCatch < 6) {
+	  Game.gameCaravan.bait--;
+	  Game.gameCaravan.food += weights[fishNum];
+	  Game.alertBox("You caught a " + fish[fishNum] + " weighing " + weights[fishNum] + " pounds", Game.scenes.Journey);
+	  return;
+	}
+	
+	else if (chanceToCatch < 8) {
+	  Game.gameCaravan.bait--;
+	  Game.alertBox("The fish took your bait and escaped", Game.scenes.Journey);
+	  return;
+	}
+	
+	else {
+	  Game.alertBox("No luck, the fish aren't biting around here", Game.scenes.Journey);
+	  return;
+    }
+  },
 };
 
 const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
