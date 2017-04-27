@@ -21,7 +21,6 @@ function getWeather(month) {
 			return weather[weightedRand({2: 0.7, 1: 0.3})];
 			break;
 	}
-
 }
 
 function death() {
@@ -68,6 +67,7 @@ function randomEvent(caravan) {
 function wrongTrail() {
 	
 	//Delay the caravan for 3 days
+	Game.passDays(3);
 	return "Took the wrong trail, lose 3 days";
 }
 
@@ -175,7 +175,6 @@ function oxenWanderedOff(caravan) {
 }
 
 function oxenSick(caravan) {
-	
 	if (caravan.sickenOxen()) {
 		return "One of your oxen has gotten sick";
 	}
