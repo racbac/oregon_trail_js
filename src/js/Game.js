@@ -508,7 +508,7 @@ var Game = {
         // get current status
         document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
         document.getElementById("weather").innerHTML = Game.weather;
-        document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
+        document.getElementById("health").innerHTML=Game.gameCaravan.getHealth();
         document.getElementById("food").innerHTML=Game.gameCaravan.food;
         document.getElementById("next_landmark").innerHTML='000';
         document.getElementById("miles").innerHTML=Game.miles;
@@ -517,22 +517,23 @@ var Game = {
           timeOfDay++;
 
           if(timeOfDay==24){//once a day
-
+            /*generate the conditions for the day*/
             Game.date.setDate(Game.date.getDate()+1);
             timeOfDay=0;
+            var weather=getWeather(Game.date.getMonth());  
 
-            /*generate the conditions for the day*/
-            var weather=getWeather(Game.date.getMonth());		    
+            // see if anyone died or got sick
+            
 			      
             /*update status and html*/
             document.getElementById("date").innerHTML=  MONTH[Game.date.getMonth()] + " " + Game.date.getDate() + ", " + Game.date.getFullYear() ;
             document.getElementById("weather").innerHTML= Game.weather = getWeather(Game.date.getMonth());
-            document.getElementById("health").innerHTML=Game.gameCaravan.health.string;
+            document.getElementById("health").innerHTML=Game.gameCaravan.getHealth();
             document.getElementById("food").innerHTML=Game.gameCaravan.updateFood();
             document.getElementById("next_landmark").innerHTML='000';
             document.getElementById("miles").innerHTML =  Game.miles += Math.floor(Game.gameCaravan.getMph() * Game.gameCaravan.pace.rate);
 
-            // see if random event happens (50% chance)
+            // see if random event happened (50% chance)
             var eventChance = (Math.random() * 10);
             if (eventChance < 5) {
               var eventResult = randomEvent(Game.gameCaravan);
@@ -552,6 +553,8 @@ var Game = {
                       clearInterval(losedays);
                       Game.scenes.Journey();
                     }, 2400);
+                  } else {
+                    Game.scenes.Journey();
                   }
                 });
               }
@@ -698,7 +701,9 @@ var Game = {
 		message = "Oh my god everybody is dead! Even the oxen and the children are dead! This was a terrible idea! "+
 		"I think I just broke my leg and caught Ebola!";
 	}
-	Game.gameDiv.innerHTML += `<p id="AlertBox" class="white_black">` + message + `</p>\n`;
+  var alert = document.createElement("p"); alert.appendChild(document.createTextNode(message)); 
+  alert.setAttribute("id", "AlertBox"); alert.setAttribute("class", "white_black");
+	Game.gameDiv.appendChild(alert);
 	Game.waitForInput(null,null,function() {Game.removeAlertBox(); returnScene() || null;});
   },
 
